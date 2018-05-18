@@ -23,7 +23,7 @@ public class Mensagem {
             @Override
             public void run(){
                 
-                String mensagem = ""; 
+                String mensagem = null; 
         
                 try{
 

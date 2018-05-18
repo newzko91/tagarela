@@ -1,9 +1,14 @@
 
 package cliente;
 
+import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.*; // Importa net porque será utilizado Socket para enviar a mensagem
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.*;
 
 public class ChatGUI extends javax.swing.JFrame {
@@ -19,8 +24,12 @@ public class ChatGUI extends javax.swing.JFrame {
         
         initComponents();
         
+        setIcon();
+        
         rodar = true;
         this.nome = nome;
+        
+        
         
         try{
         s = new Socket("127.0.0.1",5000);// Os parametros são "ip que irá se conectar","Porta que será utilizada"
@@ -72,6 +81,10 @@ public class ChatGUI extends javax.swing.JFrame {
         t.start();
     
     }
+    
+        
+
+        
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -84,20 +97,36 @@ public class ChatGUI extends javax.swing.JFrame {
         btnEnviar = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Paperless");
         setPreferredSize(new java.awt.Dimension(500, 600));
         setResizable(false);
 
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         mensagemRecebida.setEditable(false);
+        mensagemRecebida.setBackground(new java.awt.Color(255, 255, 204));
         mensagemRecebida.setColumns(20);
+        mensagemRecebida.setLineWrap(true);
         mensagemRecebida.setRows(5);
         jScrollPane3.setViewportView(mensagemRecebida);
 
-        mensagemEnviada.setColumns(20);
-        mensagemEnviada.setRows(5);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        mensagemEnviada.setBackground(new java.awt.Color(255, 255, 204));
+        mensagemEnviada.setColumns(1);
+        mensagemEnviada.setLineWrap(true);
+        mensagemEnviada.setRows(3);
+        mensagemEnviada.setTabSize(1);
+        mensagemEnviada.setAutoscrolls(false);
+        mensagemEnviada.setFocusCycleRoot(true);
+        mensagemEnviada.setMaximumSize(new java.awt.Dimension(44, 58));
         mensagemEnviada.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 mensagemEnviadaKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                mensagemEnviadaKeyReleased(evt);
             }
         });
         jScrollPane1.setViewportView(mensagemEnviada);
@@ -140,10 +169,10 @@ public class ChatGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
 
@@ -153,7 +182,9 @@ public class ChatGUI extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
 
-        
+        if("".equals(mensagemEnviada.getText().trim())){
+            }
+        else{
         String mensagem = nome + ": ";
         
        try{//Envia a mensagem e limpa a memória
@@ -171,13 +202,17 @@ public class ChatGUI extends javax.swing.JFrame {
            
        }
        
-       
+        }
 
     }//GEN-LAST:event_btnEnviarActionPerformed
-
+      
     private void mensagemEnviadaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mensagemEnviadaKeyPressed
-       
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+         
+        if (evt.getKeyCode() == evt.VK_ENTER) {
+            
+            if("".equals(mensagemEnviada.getText().trim())){
+            }
+            else{
 
             String mensagem = nome + ": ";
 
@@ -189,7 +224,7 @@ public class ChatGUI extends javax.swing.JFrame {
                 ps.println(mensagem);
                 ps.flush();//Serve para limpar a memória, mas é pouco utilizado
                 
-                mensagemEnviada.setText(null);
+                
             } catch (IOException e) {
 
                 showMessageDialog(null, "Não enviou a mensagem", "", ERROR_MESSAGE);
@@ -197,21 +232,42 @@ public class ChatGUI extends javax.swing.JFrame {
             }
 
         }
+       }
         
     }//GEN-LAST:event_mensagemEnviadaKeyPressed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
 
-       try{
+      /* try{
            s.close();
            
            System.exit(0);
        }
        catch(Exception e){
            e.printStackTrace();
-       }
+       }*/
+          Object[] options = { "Confirmar", "Cancelar" };
+          
+           int opcao = JOptionPane.showOptionDialog(null, "Realmente deseja sair?", "Aviso",
+                                              JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+               while( opcao == 0 || opcao == -1){
+                  try {     
+                  s.close();    
+                 System.exit(0);
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }break;
+         }
+             
 
     }//GEN-LAST:event_btnSairActionPerformed
+
+    private void mensagemEnviadaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mensagemEnviadaKeyReleased
+      if (evt.getKeyCode() == evt.VK_ENTER) {
+          
+          mensagemEnviada.setText("");
+      }
+    }//GEN-LAST:event_mensagemEnviadaKeyReleased
 
    
 
@@ -223,4 +279,11 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea mensagemEnviada;
     private javax.swing.JTextArea mensagemRecebida;
     // End of variables declaration//GEN-END:variables
+
+    private void setIcon() {
+        
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icone.png")));
+
+    }
+
 }
